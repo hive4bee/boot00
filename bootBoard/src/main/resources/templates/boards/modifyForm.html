@@ -1,0 +1,76 @@
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{/layout/default}">
+	<meta charset="UTF-8"/>
+	
+	<th:block layout:fragment="css">
+	<style>
+		input{
+			border:1px solid #eeeeee;
+			width:100%;
+		}
+		textarea{
+			width:100%;
+		}
+	</style>
+</th:block>
+<div layout:fragment="content">
+		                <!-- Begin Page Content -->
+               
+<div class="container-fluid  justify-content-center">
+		<form action="/boards/modifyPro" method="post" name="modifyForm">
+		<h1 class="h3 ml-2 mb-2 text-gray-800">[[${dto.bno}]]번 글</h1>
+		<input type="hidden" name="bno" th:value="${dto.bno}">
+		<input type="hidden" name="page" th:value="${page}"/>
+		<input type="hidden" name="keyword" th:value="${keyword}"/>
+		<div class="row col-lg-12 align-items-center mb-2">
+			<span class="col-lg-1">제목</span>
+			<span class="col-lg-7">
+				<input type="text" th:value="${dto.bsubject}" name="bsubject">
+			</span>
+		</div>
+		<div class="row col-lg-12 align-items-center mb-2">
+			
+			<span class="col-lg-1">내용</span>
+			<span class="col-lg-7">
+				<textarea rows="15" name="bcontent">[[${dto.bcontent}]]</textarea>
+			</span>
+			
+		</div>
+		<div class='row ml-2 mt-2'>
+			<div class="col-sm-12 ml-2 mt-2 mb-5">
+				<a href="#" class="btn btn-primary backBtn">뒤로가기</a>
+						<a href="#" class="btn btn-primary modifyBtn">수정하기</a>
+			</div>
+		</div>
+	</form>
+</div>
+
+</div>
+	<th:block layout:fragment="script">
+		<script>
+		$(".modifyBtn").on("click", function(e){
+			e.preventDefault();
+			console.log("modify button clicked....");
+			if(!$("input[name='bsubject']").val().trim()){
+				alert("제목을 입력하셔야 합니다.");
+				return ;
+			}
+			if(!$("textarea[name='bcontent']").val().trim()){
+				alert("내용을 입력하셔야 합니다.");
+				return;
+			}
+			var modifyFormObj=$("form[name='modifyForm']")
+
+			alert("수정이 완료되었습니다.");
+			modifyFormObj.submit();
+		});
+		$(".backBtn").on("click", function(e){
+			e.preventDefault();
+			window.history.back();
+		})
+		
+	</script>
+	</th:block>
+	
+</html>

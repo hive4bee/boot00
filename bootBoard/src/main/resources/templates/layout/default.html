@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+	<meta charset="UTF-8"/>
+	<title>ASJ</title>
+	<th:block th:replace="fragments/config::configFragment"></th:block>
+</head>
+<body>
+	<th:block layout:fragment="css"></th:block>
+	<th:block th:replace="fragments/header::headerFragment"></th:block>
+	
+	<th:block layout:fragment="content"></th:block>
+	
+	<th:block th:replace="fragments/footer::footerFragment"></th:block>
+	
+		    <!-- Bootstrap core JavaScript-->
+    <script src="/resources/vendor/jquery/jquery.min.js"></script>
+    <script src="/resources/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="/resources/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="/resources/js/sb-admin-2.min.js"></script>
+
+    <!-- Page level plugins -->
+    <script src="/resources/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="/resources/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+    <!-- Page level custom scripts -->
+    <script src="/resources/js/demo/datatables-demo.js"></script>
+    <script>
+    	$(".searchBtn").on("click", function(e){
+    		e.preventDefault();
+    		console.log("clicked....");
+    		var searchInput = $(".searchInput").val();
+    		console.log("searchInput: " + searchInput);
+    		if(!searchInput){
+    			alert("값을 입력하셔야 합니다.");
+    			return;
+    		}else{
+    			var formObj=$("form[name='searchForm']");
+    			formObj.submit();
+    		}
+    		
+    	});
+    </script>
+	<th:block layout:fragment="script"></th:block>
+</body>
+</html>

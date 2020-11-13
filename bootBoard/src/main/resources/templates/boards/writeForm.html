@@ -1,0 +1,89 @@
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{/layout/default}">
+	<meta charset="UTF-8"/>
+	
+	<th:block layout:fragment="css">
+	<style>
+		input{
+			border:1px solid #eeeeee;
+			width:100%;
+		}
+		textarea{
+			width:100%;
+		}
+	</style>
+</th:block>
+<div layout:fragment="content">
+		                <!-- Begin Page Content -->
+               
+<div class="container-fluid  justify-content-center">
+	<h1 class="h3 ml-2 mb-5 text-gray-800 text-center">글작성</h1>
+	<form class="user" method="post" name="writeForm" action="writePro">
+		
+			<div class="row align-items-center justify-content-center mb-2">
+				<span class="col-sm-8 col-md-1">제목</span>
+				<span class="col-sm-8 col-md-7">
+					<input type="text" id="bsubject" name="bsubject">
+				</span>
+			</div>
+			<div class="row align-items-center justify-content-center mb-2">
+				
+				<span class="col-sm-8 col-md-1">내용</span>
+				<span class="col-sm-8 col-md-7">
+					<textarea rows="15" id="bcontent" name="bcontent"></textarea>
+				</span>
+				
+			</div>
+			<div class='row align-items-center justify-content-center'>
+				<span clsas="col-sm-8 col-md-4">
+					<button type="button" class="btn btn-primary submitBtn">제출</button>
+					<button type="button" class="btn btn-primary backBtn ml-2">돌아가기</button>
+				</span>
+			</div>
+			<input type="hidden" name="mid" value="">
+	</form>
+</div>
+
+</div>
+	<th:block layout:fragment="script">
+	<script th:inline="javascript">
+	var userId='user00';
+	$(".submitBtn").on("click",function(e){
+		e.preventDefault();
+		console.log("submit button clicked....");
+		if(!$("#bsubject").val().trim()){
+			alert("제목을 입력하셔야 합니다.");
+			$("input[type='text']").focus();
+			return false;
+		}
+		if(!$("#bcontent").val().trim()){
+			alert("내용을 입력하셔야 합니다.");
+			$("textarea").focus();
+			return false;
+		}
+		if(!userId){
+			alert("로그인을 하시기 바랍니다.");
+			
+			return false;
+		}
+		if($("#bsubject").val().trim()!="" && $("#bcontent").val().trim()!=""){
+			var formObj=$("form[name='writeForm']");
+			
+			console.log("userId : " + userId);
+			$("input[name='mid']").val(userId);
+			alert("글이 작성되었습니다.");
+			formObj.submit();
+		}
+		
+	});
+	$(".backBtn").on("click", function(e){
+		e.preventDefault();
+		console.log("back btn clicked...");
+		window.history.go(-1);
+	});
+	
+	</script>
+	</th:block>
+	
+</html>

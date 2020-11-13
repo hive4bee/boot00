@@ -1,0 +1,115 @@
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{/layout/default}">
+	<meta charset="UTF-8"/>
+	<th:block layout:fragment="css"></th:block>
+	
+	<div layout:fragment="content">
+		                <!-- Begin Page Content -->
+                <div class="container-fluid">
+
+                    <!-- Page Heading -->
+                    <h1 class="h3 mb-2 text-gray-800">spring boot project</h1>
+                    <p class="mb-4">boards</p>
+
+                    <!-- DataTales Example -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <a href="/boards/writeForm" class="btn btn-primary writeBtn">글작성</a>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>글번호</th>
+                                            <th>글제목</th>
+                                            <th>작성자</th>
+                                            <th>작성일</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="board: ${list}">
+											<td th:text="${board.bno}"></td>
+											<td th:if="${#strings.isEmpty(board.bpmid)}">
+												<a th:data th:href="${board.bno}" class='readBoardBno'>[[${board.bsubject}]]</a>
+												<input type="hidden" name="kw" th:value="${keyword}">
+											</td>
+											<td th:unless="${#strings.isEmpty(board.bpmid)}">
+												<a th:href="${board.bno}" class="readBoardBno" style="padding:5px">@<strong>[[${board.bpmid}]],&nbsp;</strong>[[${board.bsubject}]]</a>
+												<input type="hidden" name="kw" th:value="${keyword}">
+											</td>
+											<td th:text="${board.mid}"></td>
+											<td th:text="${#dates.format(board.bregdate, 'yyyy-MM-dd HH:mm:SS')}"></td>
+                                        </tr>
+										<tr>
+											<td colspan="4" class="justify-cotent-center">
+												<ul class="pagination">
+													<li th:if="${pageMaker.prev}" class="page-item">
+														<a th:href="${pageMaker.startPage-1}" class="page-link" aria-label="Previous">
+															<span aria-hidden="true">
+																<span class="lnr lnr-chevron-left">Prev</span>
+															</span>
+														</a>
+													</li>
+													<li th:each="num:${#numbers.sequence(pageMaker.startPage, pageMaker.endPage)}" th:classappend="${num == pageMaker.st.page} ? 'active' : ''" class="page-item">
+														<a th:href="${num}" class="page-link">[[${num}]]</a>
+													</li>
+													<li th:if="${pageMaker.next}" class="page-item">
+														<a th:href="${pageMaker.endPage+1}" class="page-link" aria-label="Next">
+															<span aria-hidden="true">
+																<span class="lnr lnr-chevron-left">Next</span>
+															</span>
+														</a>
+													</li>
+												</ul>
+											</td>
+										</tr>
+                                    </tbody>
+                                    
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- /.container-fluid -->
+			<form name='listForm' action="/boards/list">
+				<input type="hidden" name="page">
+				<input type="hidden" name="keyword" th:value="${keyword}">
+			</form>
+			<form name="readForm" action="/boards/read">
+				<input type="hidden" name="bno">
+				<input type="hidden" name="page" th:value="${pageMaker.st.page}">
+				<input type="hidden" name="keyword" th:value="${keyword}">
+			</form>
+	</div>
+	
+	<th:block layout:fragment="script">
+		<script th:inline="javascript">
+			$(".page-link").on("click", function(e){
+				
+				e.preventDefault();
+				console.log("페이지 링크 클릭 이벤트 빌생...");
+				var page=$(this).attr("href");
+				console.log("page: " + page);
+				$("input[name='page']").val(page);
+				$("input[name='keyword']").val()
+				listFormObj=$("form[name='listForm']");
+				listFormObj.submit();
+			});
+			$(".readBoardBno").on("click", function(e){
+				e.preventDefault();
+				console.log("제목 클릭 이벤트 발생...");
+				var bno = $(this).attr("href");
+				var keyword = $(this).closest("td").find("input[name='kw']").val();
+				console.log("keyword: " + keyword);
+				$("input[name='bno']").val(bno);
+				//$("input[name='keyword']").val(keyword);
+				$("form[name='readForm']").submit();
+			});
+			
+		</script>
+	</th:block>
+	
+</html>

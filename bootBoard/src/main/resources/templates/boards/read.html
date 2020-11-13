@@ -1,0 +1,133 @@
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{/layout/default}">
+	<meta charset="UTF-8"/>
+	
+	<th:block layout:fragment="css">
+		<style>
+	input{
+		border:1px solid #eeeeee;
+		width:100%;
+	}
+	textarea{
+		width:100%;
+	}
+	li{
+		list-style-type:none;
+	}
+	.listLi{
+		list-style-type:none;
+		border-bottom:1px solid #cccccc;
+		margin-bottom:20px;
+	}
+	ul{
+		padding-left:0px;
+	}
+</style>
+</th:block>
+<div layout:fragment="content">
+		                <!-- Begin Page Content -->
+               
+<div class="container-fluid justify-content-center">
+	<h1 class="h3 ml-2 mb-2 text-gray-800">[[${dto.bno}]]번 글</h1>
+	
+	
+		<div class='row ml-2 mt-2'>
+			
+			<div class="col-sm-12 ml-2 mt-2 mb-5">
+				<a th:href="${page}" class="btn btn-primary listBtn">리스트</a>
+					<!-- <c:if test="${!empty mid}"> -->
+						<a href="#" class="btn btn-primary replyBtn">답글달기</a>
+					<!-- </c:if> -->
+					<!-- <c:if test="${mid eq dto.mid}"> -->
+						
+						<a href="#" class="btn btn-primary modifyBtn">수정하기</a>
+						<a th:href="${dto.bpmid}" class="btn btn-primary deleteBtn">삭제하기</a>
+					<!-- </c:if> -->
+			</div>
+		</div>
+		
+			
+		<div class="row col-lg-12 align-items-center mb-2">
+			<span class="col-lg-1">제목</span>
+			<span class="col-lg-7">
+				<input type="text" th:value="${dto.bsubject}" readonly>
+			</span>
+		</div>
+		<div class="row col-lg-12 align-items-center mb-4">
+			
+			<span class="col-lg-1">내용</span>
+			<span class="col-lg-7">
+				<textarea rows="15" readonly>[[${dto.bcontent}]]</textarea>
+			</span>
+			
+		</div>
+		
+
+</div>
+	<form name="listForm" action="/boards/list">
+		<input type="hidden" name="page" th:value="${page}">
+		<input type="hidden" name="keyword" th:value="${keyword}">
+	</form>
+	<form name="modifyForm" action="/boards/modifyForm">
+		<input type="hidden" name="page" th:value="${page}">
+		<input type="hidden" name="bno" th:value="${dto.bno}">
+		<input type="hidden" name="keyword" th:value="${keyword}">
+	</form>
+	<form name="deleteForm" action="/boards/deletePro">
+		<input type="hidden" name="bno" th:value="${dto.bno}">
+		<input type="hidden" name="page" th:value="${page}">
+		<input type="hidden" name="keyword" th:value="${keyword}">
+	</form>
+	<form name="deleteForm2" action="/boards/deleteParentPro">
+		<input type="hidden" name="bgroup" th:value="${dto.bgroup}">
+		<input type="hidden" name="page" th:value="${page}">
+		<input type="hidden" name="keyword" th:value="${keyword}">
+	</form>
+	<form name="replyForm" action="/boards/replyForm">
+		<input type="hidden" name="bpno" th:value="${dto.bno}">
+		<input type="hidden" name="bgroup" th:value="${dto.bgroup}">
+		<input type="hidden" name="bpmid" th:value="${dto.mid}">
+		<input type="hidden" name="page" th:value="${page}">
+		<input type="hidden" name="keyword" th:value="${keyword}">
+	</form>
+</div>
+	<th:block layout:fragment="script">
+		<script th:inline="javascript">
+			//var page=[[${page}]];
+			$(".listBtn").on("click", function(e){
+				e.preventDefault();
+				//console.log("page : " + page);
+				$("form[name='listForm']").submit();
+			});
+			$(".modifyBtn").on("click", function(e){
+				e.preventDefault();
+				console.log("modify btn clicked..");
+				$("form[name='modifyForm']").submit();
+			});
+			$(".deleteBtn").on("click", function(e){
+				e.preventDefault();
+				var bpmid = $(this).attr("href");
+				console.log("bpmid: " + bpmid);
+				var result = confirm("정말로 지우시겠습니까?");
+				 
+				if(result){
+					alert("성공적으로 지웠습니다.");
+					if(bpmid){
+						$("form[name='deleteForm']").submit();
+					}else{
+						$("form[name='deleteForm2']").submit();
+					}
+					
+				}
+				
+			});
+			$(".replyBtn").on("click", function(e){
+				e.preventDefault();
+				$("form[name='replyForm']").submit();
+			});
+			
+		</script>
+	</th:block>
+	
+</html>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ansj.mapper.BoardsMapper">
+	<insert id="writeBoard">
+		<selectKey resultType="int" keyProperty="bno" order="BEFORE">
+			SELECT coalesce(MAX(bno),0)+1 FROM boards
+		</selectKey>
+		INSERT INTO boards(bno, mid, bsubject, bcontent, bregdate, bstatus, bgroup) 
+		VALUES(#{bno}, #{mid}, #{bsubject}, #{bcontent}, NOW(), 'y', #{bno})
+	</insert>
+	
+	<insert id="replyBoard">
+		<selectKey resultType="int" keyProperty="bno" order="BEFORE">
+			SELECT MAX(bno)+1 FROM boards
+		</selectKey>
+		INSERT INTO boards(bno, mid, bsubject, bcontent, bregdate, bstatus, bgroup, bpmid)
+		VALUES(${bno}, #{mid}, #{bsubject}, #{bcontent}, NOW(), 'y',#{bgroup},#{bpmid})
+	</insert>
+	
+	<select id="getBoardList" resultType="com.ansj.domain.BoardsDTO">
+		SELECT * 
+		FROM boards 
+		where bstatus='y'
+		ORDER BY bgroup DESC, bregdate ASC
+		LIMIT 10 OFFSET (#{page}-1)*10
+	</select>
+	
+	<select id="getBoardListWithKeyword" resultType="com.ansj.domain.BoardsDTO">
+		SELECT sb.bno, sb.bsubject, sb.mid, sb.bregdate, sb.bpmid
+		FROM boards pb JOIN boards sb ON(pb.bno = sb.bgroup)
+		WHERE pb.bstatus='y' AND sb.bstatus='y'
+		AND (pb.bsubject LIKE '%'||#{keyword}||'%' OR pb.bcontent LIKE '%'||#{keyword}||'%')
+		ORDER BY sb.bgroup DESC, sb.bregdate ASC
+		LIMIT 10 OFFSET (#{page}-1)*10
+	</select>
+	
+	<select id="getTotalBoardCount" resultType="int">
+		SELECT COUNT(*) FROM boards WHERE bstatus='y'
+	</select>
+	
+	<select id="getTotalBoardCountWithKeyword" resultType="int">
+		SELECT COUNT(*) 
+		FROM boards pb JOIN boards sb ON (pb.bno = sb.bgroup) 
+		WHERE (pb.bsubject LIKE '%'||#{keyword}||'%' OR pb.bcontent LIKE '%'||#{keyword}||'%')
+		AND pb.bstatus='y' AND sb.bstatus='y'
+	</select>
+	
+	<select id="readBoard" resultType="com.ansj.domain.BoardsDTO">
+		SELECT * FROM boards WHERE bno = #{bno}
+	</select>
+	
+	<update id="updateBoard">
+		UPDATE boards
+		SET bsubject=#{bsubject}, bcontent=#{bcontent}
+		WHERE bno=#{bno}
+	</update>
+	
+	<update id="deleteBoard">
+		UPDATE boards
+		SET bstatus='n'
+		WHERE bno=#{bno}
+	</update>
+	
+	<update id="deleteParentBoard">
+		UPDATE boards
+		SET bstatus='n'
+		WHERE bgroup=#{bgroup}
+	</update>
+	
+	<select id="getMax" resultType="int">
+		SELECT coalesce(max(bno), 1) FROM boards;
+	</select>
+</mapper>
